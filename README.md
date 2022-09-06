@@ -1,2 +1,2 @@
 # Java_Advanced
-Java Advanced course from SoftUni where I upload homeworks and problems
+Java Advanced (SoftUni) course repository where I upload homeworks and problems
