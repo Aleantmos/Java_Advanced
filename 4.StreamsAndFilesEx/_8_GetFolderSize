@@ -1,0 +1,25 @@
+import java.io.*;
+
+public class _8_GetFolderSize {
+
+    private static final String DIR_PATH = "src/StreamsFilesDirectories/ressources/Exercises Resources";
+    private static final String OUTPUT_PATH = "src/StreamsFilesDirectories/ressources/result.txt";
+
+    public static void main(String[] args) {
+        try (PrintWriter writer = new PrintWriter(OUTPUT_PATH)) {
+
+            int size = 0;
+            File folder = new File(DIR_PATH);
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    size += file.length();
+                }
+            }
+            writer.println("Folder size: " + size);
+
+        } catch (IOException ios) {
+            ios.printStackTrace();
+        }
+    }
+}
