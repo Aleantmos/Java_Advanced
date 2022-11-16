@@ -1,0 +1,75 @@
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class _1_KAT {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        ArrayDeque<Integer> platesStorage = new ArrayDeque<>();
+        ArrayDeque<Integer> carsStorage = new ArrayDeque<>();
+
+        int[] licensePlates = getData(scan);
+        for (int licensePlate : licensePlates) {
+            platesStorage.add(licensePlate);
+        }
+
+        int[] cars = getData(scan);
+        for (Integer car : cars) {
+            carsStorage.push(car);
+        }
+
+        int registeredCars = 0;
+        int daysRegisteringCnt = 0;
+        while (!platesStorage.isEmpty() && !carsStorage.isEmpty()) {
+
+            daysRegisteringCnt++;
+
+            int currentLicencePlateCnt = platesStorage.peek();
+            int platesNeeded = carsStorage.peek() * 2;
+
+            if (platesNeeded <= currentLicencePlateCnt) {
+
+                int licencePlatesLeft = platesStorage.peek() - platesNeeded;
+
+                if (licencePlatesLeft > 0) {
+                    platesStorage.add(licencePlatesLeft);
+                }
+                registeredCars += platesNeeded / 2;
+                carsStorage.pop();
+
+
+            } else if (platesNeeded > currentLicencePlateCnt){
+
+                int carsLeft = carsStorage.peek() - currentLicencePlateCnt / 2;
+                carsStorage.pop();
+                carsStorage.push(carsLeft);
+                registeredCars += (platesNeeded / 2) - carsLeft;
+
+            }
+            platesStorage.poll();
+        }
+        System.out.printf("%d cars were registered for %d days!%n", registeredCars, daysRegisteringCnt);
+        if (carsStorage.isEmpty() && !platesStorage.isEmpty()) {
+            int platesLeft = 0;
+            for (int licensePlate : platesStorage) {
+                platesLeft += licensePlate;
+            }
+            System.out.printf("%d license plates remain!%n", platesLeft);
+        } else if (!carsStorage.isEmpty() && platesStorage.isEmpty()) {
+            int carsLeftToRegister = 0;
+            for (Integer car : carsStorage) {
+                carsLeftToRegister += car;
+            }
+            System.out.printf("%d cars remain without license plates!%n", carsLeftToRegister);
+        } else if (carsStorage.isEmpty() && platesStorage.isEmpty()) {
+            System.out.println("Good job! There is no queue in front of the KAT!");
+        }
+    }
+
+    private static int[] getData(Scanner scan) {
+        return Arrays.stream(scan.nextLine().split(", "))
+                .mapToInt(num -> Integer.parseInt(num))
+                .toArray();
+    }
+}
