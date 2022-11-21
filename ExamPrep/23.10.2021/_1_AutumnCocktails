@@ -1,0 +1,78 @@
+import java.util.*;
+
+public class _1_AutumnCocktails {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        //queue - ingredients
+        ArrayDeque<Integer> ingredients = new ArrayDeque<>();
+        Integer[] getIngredients = Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(ingredient -> Integer.parseInt(ingredient))
+                .toArray(Integer[]::new);
+
+        Collections.addAll(ingredients, getIngredients);
+
+        // stack - freshness
+        ArrayDeque<Integer> freshness = new ArrayDeque<>();
+        Integer[] getFreshness = Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(currFreshness -> Integer.parseInt(currFreshness))
+                .toArray((Integer[]::new));
+
+        Arrays.stream(getFreshness).forEach(currFreshness -> freshness.push(currFreshness));
+
+
+        Map<String, Integer> cocktails = new TreeMap<>();
+
+        while (!ingredients.isEmpty() && !freshness.isEmpty()) {
+
+            int currIngredient = ingredients.remove();
+            if (currIngredient == 0) {
+                continue;
+            }
+            int currFreshness = freshness.pop();
+
+            int totalFreshnessLevel = currFreshness * currIngredient;
+
+            String cocktail = checkCocktail(totalFreshnessLevel);
+
+            if (cocktail.equals("noCocktailMade")) {
+                currIngredient += 5;
+                ingredients.add(currIngredient);
+            } else {
+                cocktails.putIfAbsent(cocktail, 0);
+                cocktails.put(cocktail, cocktails.get(cocktail) + 1);
+            }
+        }
+
+        if (cocktails.size() == 4) {
+            System.out.println("It's party time! The cocktails are ready!");
+        } else {
+            System.out.println("What a pity! You didn't manage to prepare all cocktails.");
+        }
+
+        if (!ingredients.isEmpty()) {
+            int sum = 0;
+            while (!ingredients.isEmpty()) {
+                sum += ingredients.pop();
+            }
+            System.out.println("Ingredients left: " + sum);
+        }
+        cocktails.forEach((cocktail, cnt) -> System.out.printf(" # %s --> %d%n", cocktail, cnt));
+    }
+
+    private static String checkCocktail(int totalFreshnessLevel) {
+
+        String cocktailName = "noCocktailMade";
+
+        if (totalFreshnessLevel == 150) {
+            cocktailName = "Pear Sour";
+        } else if (totalFreshnessLevel == 250) {
+            cocktailName = "The Harvest";
+        } else if (totalFreshnessLevel == 300) {
+            cocktailName = "Apple Hinny";
+        } else if (totalFreshnessLevel == 400) {
+            cocktailName = "High Fashion";
+        }
+        return cocktailName;
+    }
+}
