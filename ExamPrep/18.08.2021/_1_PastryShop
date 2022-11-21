@@ -1,0 +1,71 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class _1_PastryShop {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        ArrayDeque<Integer> liquids = new ArrayDeque<>(); //queue
+        Integer[] getLiquids = Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(liquid -> Integer.parseInt(liquid))
+                .toArray(Integer[]::new);
+        Collections.addAll(liquids, getLiquids);
+
+        ArrayDeque<Integer> ingredients = new ArrayDeque<>(); //stack
+        Integer[] getIngredients = Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(ingredient -> Integer.parseInt(ingredient))
+                .toArray(Integer[]::new);
+        Arrays.stream(getIngredients).forEach(ingredient -> ingredients.push(ingredient));
+
+        Map<Integer, String> pastryMap = new HashMap<>();
+
+        pastryMap.put(25, "Biscuit");
+        pastryMap.put(50, "Cake");
+        pastryMap.put(75, "Pastry");
+        pastryMap.put(100, "Pie");
+
+        Map<String, Integer> desserts = new TreeMap<>();
+
+        while (!(liquids.isEmpty()) && !(ingredients.isEmpty())) {
+            int liquid = liquids.remove();
+            int ingredient = ingredients.pop();
+
+            int sum = liquid + ingredient;
+
+            if (pastryMap.containsKey(sum)) {
+                String dessert = pastryMap.get(sum);
+                desserts.putIfAbsent(dessert, 0);
+                desserts.put(dessert, desserts.get(dessert) + 1);
+            } else {
+                ingredients.push(ingredient + 3);
+            }
+        }
+        String result;
+
+        if (desserts.size() == 4) {
+            result = "Great! You succeeded in cooking all the food!";
+        } else {
+            result = "What a pity! You didn't have enough materials to cook everything.";
+        }
+        System.out.println(result);
+
+        if (liquids.isEmpty()) {
+            result = "Liquids left: none";
+        } else {
+            result = String.format("Liquids left: %s", liquids.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        }
+        System.out.println(result);
+
+        if (ingredients.isEmpty()) {
+            result = "Ingredients left: none";
+        } else {
+            result = String.format("Ingredients left: %s", ingredients.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        }
+        System.out.println(result);
+
+        System.out.println("Biscuit: " + (desserts.getOrDefault("Biscuit", 0)));
+        System.out.println("Cake: " + (desserts.getOrDefault("Cake", 0)));
+        System.out.println("Pie: " + (desserts.getOrDefault("Pie", 0)));
+        System.out.println("Pastry: " + (desserts.getOrDefault("Pastry", 0)));
+    }
+}
