@@ -1,0 +1,56 @@
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Scanner;
+
+public class _1_OSPlanning {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        ArrayDeque<Integer> tasks = new ArrayDeque<>(); //stack
+        Integer[] getTasks = Arrays.stream(scan.nextLine().split(", "))
+                .map(task -> Integer.parseInt(task))
+                .toArray(Integer[]::new);
+        Arrays.stream(getTasks).forEach(task -> tasks.push(task));
+
+        ArrayDeque<Integer> threads = new ArrayDeque<>(); //queue
+        Integer[] getThreads = Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(thread -> Integer.parseInt(thread))
+                .toArray(Integer[]::new);
+
+        Collections.addAll(threads, getThreads);
+
+        int taskNeeded = Integer.parseInt(scan.nextLine());
+        boolean taskKilled = false;
+        int threadKiller = Integer.MIN_VALUE;
+
+        while (!taskKilled) {
+            int currTask = tasks.peek();
+            int currThread = threads.peek();
+            if (currTask == taskNeeded) {
+                taskKilled = true;
+                threadKiller = currThread;
+            } else if (currThread >= currTask) {
+                tasks.pop();
+                threads.poll();
+            } else {
+                threads.poll();
+
+            }
+        }
+
+        System.out.printf("Thread with value %d killed task %d%n", threadKiller, taskNeeded);
+
+        printThreads(threads);
+    }
+
+    private static void printThreads(ArrayDeque<Integer> threads) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Integer thread : threads) {
+            sb.append(thread + " ");
+        }
+
+        System.out.println(sb.toString().trim());
+    }
+}
