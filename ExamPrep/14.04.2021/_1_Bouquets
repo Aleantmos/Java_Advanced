@@ -1,0 +1,61 @@
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Scanner;
+
+public class _1_Bouquets {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        //ToDo - 75/100
+        //tulips -> stack
+        ArrayDeque<Integer> tulips = new ArrayDeque<>();
+        Integer[] getTulips = Arrays.stream(scan.nextLine().split(", "))
+                .map(tulip -> Integer.parseInt(tulip))
+                .toArray(Integer[]::new);
+        Arrays.stream(getTulips).forEach(tulip -> tulips.push(tulip));
+
+        //daffodils -> queue
+        ArrayDeque<Integer> daffodils = new ArrayDeque<>();
+        Integer[] getDaffodils = Arrays.stream(scan.nextLine().split(", "))
+                .map(daffodil -> Integer.parseInt(daffodil))
+                .toArray(Integer[]::new);
+        Collections.addAll(daffodils, getDaffodils);
+        int bouquetCnt = 0;
+        int storedFlowers = 0;
+        boolean enoughBouquets = false;
+
+        while (!tulips.isEmpty() || !daffodils.isEmpty()) {
+
+            int currTulips = tulips.pop();
+            int currDaffodils = daffodils.remove();
+
+            int bouquet = currDaffodils + currTulips;
+
+
+            while (bouquet > 15) {
+                currDaffodils -= 2;
+                bouquet = currDaffodils + currTulips;
+            }
+            if (bouquet == 15) {
+                bouquetCnt++;
+                if (bouquetCnt == 5) {
+                    enoughBouquets = true;
+                    break;
+                }
+            } else {
+                storedFlowers += bouquet;
+            }
+        }
+
+        bouquetCnt += storedFlowers / 15;
+
+        if (enoughBouquets) {
+            System.out.println("You made it! You go to the competition with 5 bouquets!");
+
+        } else {
+            int bouquetsNeeded = 5 - bouquetCnt;
+            System.out.printf("You failed... You need more %d bouquets.", bouquetsNeeded);
+        }
+
+    }
+}
