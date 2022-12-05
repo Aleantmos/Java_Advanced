@@ -1,0 +1,162 @@
+import java.util.Scanner;
+
+public class _2_CookingJourney {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        int dim = Integer.parseInt(scan.nextLine());
+
+        String[][] pastryShop = new String[dim][dim];
+        pastryShop = getPastryShop(dim, scan, pastryShop);
+
+        int[] myPosition = new int[2];
+        String element = "S";
+        myPosition = findElement(pastryShop, myPosition, dim, element);
+        pastryShop[myPosition[0]][myPosition[1]] = "-";
+
+        int moneyEarned = 0;
+        boolean outOfShop = false;
+        boolean enoughMoney = false;
+
+
+        while (true) {
+
+            String command = scan.nextLine();
+
+            if (command.equals("right")) {
+                myPosition[1] += 1;
+
+                outOfShop = checkScope(outOfShop, myPosition, dim);
+                if (outOfShop) {
+                    break;
+                }
+
+                if (pastryShop[myPosition[0]][myPosition[1]].equals("P")) {
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                    element = "P";
+                    myPosition = findElement(pastryShop, myPosition, dim, element);
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                } else if (!pastryShop[myPosition[0]][myPosition[1]].equals("-")) {
+                    int money = Integer.parseInt(pastryShop[myPosition[0]][myPosition[1]]);
+                    moneyEarned += money;
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                }
+            } else if (command.equals("left")) {
+                myPosition[1] -= 1;
+
+                outOfShop = checkScope(outOfShop, myPosition, dim);
+                if (outOfShop) {
+                    break;
+                }
+                if (pastryShop[myPosition[0]][myPosition[1]].equals("P")) {
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                    element = "P";
+                    myPosition = findElement(pastryShop, myPosition, dim, element);
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                } else if (!pastryShop[myPosition[0]][myPosition[1]].equals("-")) {
+                    int money = Integer.parseInt(pastryShop[myPosition[0]][myPosition[1]]);
+                    moneyEarned += money;
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                }
+            } else if (command.equals("up")) {
+                myPosition[0] -= 1;
+
+                outOfShop = checkScope(outOfShop, myPosition, dim);
+                if (outOfShop) {
+                    break;
+                }
+                if (pastryShop[myPosition[0]][myPosition[1]].equals("P")) {
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                    element = "P";
+                    myPosition = findElement(pastryShop, myPosition, dim, element);
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                } else if (!pastryShop[myPosition[0]][myPosition[1]].equals("-")) {
+                    int money = Integer.parseInt(pastryShop[myPosition[0]][myPosition[1]]);
+                    moneyEarned += money;
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                }
+            } else if (command.equals("down")) {
+                myPosition[0] += 1;
+
+                outOfShop = checkScope(outOfShop, myPosition, dim);
+                if (outOfShop) {
+                    break;
+                }
+                if (pastryShop[myPosition[0]][myPosition[1]].equals("P")) {
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                    element = "P";
+                    myPosition = findElement(pastryShop, myPosition, dim, element);
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                } else if (!pastryShop[myPosition[0]][myPosition[1]].equals("-")) {
+                    int money = Integer.parseInt(pastryShop[myPosition[0]][myPosition[1]]);
+                    moneyEarned += money;
+                    pastryShop[myPosition[0]][myPosition[1]] = "-";
+                }
+            }
+            if (moneyEarned > 50) {
+                enoughMoney = true;
+                break;
+            }
+        }
+
+        if (outOfShop) {
+            System.out.println("Bad news! You are out of the pastry shop.");
+        } else if (enoughMoney) {
+            pastryShop[myPosition[0]][myPosition[1]] = "S";
+            System.out.println("Good news! You succeeded in collecting enough money!");
+        }
+
+        System.out.printf("Money: %d%n", moneyEarned);
+        printMatrix(pastryShop, dim);
+
+    }
+
+    private static void printMatrix(String[][] pastryShop, int dim) {
+
+        for (int row = 0; row < dim; row++) {
+            for (int col = 0; col < dim; col++) {
+                System.out.print(pastryShop[row][col]);
+            }
+            System.out.println();
+        }
+    }
+
+    private static boolean checkScope(boolean outOfShop, int[] myPosition, int dim) {
+        outOfShop = false;
+
+        if (myPosition[0] < 0 || myPosition[0] >= dim || myPosition[1] < 0 || myPosition[1] >= dim) {
+            outOfShop = true;
+        }
+        return outOfShop;
+    }
+
+    private static int[] findElement(String[][] pastryShop, int[] position, int dim, String element) {
+
+        boolean positionFound = false;
+
+        for (int row = 0; row < dim; row++) {
+            for (int col = 0; col < dim; col++) {
+                if (pastryShop[row][col].equals(element)) {
+                    position[0] = row;
+                    position[1] = col;
+                    positionFound = true;
+                    break;
+                }
+            }
+            if (positionFound) {
+                break;
+            }
+        }
+        return position;
+    }
+
+    private static String[][] getPastryShop(int dim, Scanner scan, String[][] pastryShop) {
+
+        for (int row = 0; row < dim; row++) {
+            String[] arr = scan.nextLine().split("");
+            pastryShop[row] = arr;
+        }
+        return pastryShop;
+    }
+
+}
