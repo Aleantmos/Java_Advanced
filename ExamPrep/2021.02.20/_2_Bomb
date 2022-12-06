@@ -1,0 +1,173 @@
+import java.util.Scanner;
+
+public class _2_Bomb {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        int dim = Integer.parseInt(scan.nextLine());
+
+        String[] commands = scan.nextLine().split(",");
+
+        String[][] matrix = new String[dim][dim];
+        matrix = getMatrix(scan, dim, matrix);
+
+        int[] myPosition = new int[2];
+        myPosition = getMyPosition(dim, matrix, myPosition);
+
+        int size = commands.length;
+        int cnt = 0;
+
+        int bombsCnt = getBombsCnt(matrix, dim);
+
+        int defusedCnt = 0;
+        boolean bombsDefused = false;
+        boolean gameEnded = false;
+
+        while (cnt < size) {
+            String currCommand = commands[cnt];
+
+            switch (currCommand) {
+                case "up":
+                    myPosition[0] -= 1;
+                    if (outOfScope(myPosition, dim)) {
+                        myPosition[0] += 1;
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("B")) {
+                        System.out.println("You found a bomb!");
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        defusedCnt++;
+                        if (bombsCnt == defusedCnt) {
+                            bombsDefused = true;
+                            break;
+                        }
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("e")) {
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        gameEnded = true;
+                        break;
+                    }
+
+                    break;
+                case "down":
+                    myPosition[0] += 1;
+                    if (outOfScope(myPosition, dim)) {
+                        myPosition[0] -= 1;
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("B")) {
+                        System.out.println("You found a bomb!");
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        defusedCnt++;
+                        if (bombsCnt == defusedCnt) {
+                            bombsDefused = true;
+                            break;
+                        }
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("e")) {
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        gameEnded = true;
+                        break;
+                    }
+                    break;
+                case "left":
+                    myPosition[1] -= 1;
+                    if (outOfScope(myPosition, dim)) {
+                        myPosition[1] += 1;
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("B")) {
+                        System.out.println("You found a bomb!");
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        defusedCnt++;
+                        if (bombsCnt == defusedCnt) {
+                            bombsDefused = true;
+                            break;
+                        }
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("e")) {
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        gameEnded = true;
+                        break;
+                    }
+                    break;
+                case "right":
+                    myPosition[1] += 1;
+                    if (outOfScope(myPosition, dim)) {
+                        myPosition[1] -= 1;
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("B")) {
+                        System.out.println("You found a bomb!");
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        defusedCnt++;
+                        if (bombsCnt == defusedCnt) {
+                            bombsDefused = true;
+                            break;
+                        }
+                    } else if (matrix[myPosition[0]][myPosition[1]].equals("e")) {
+                        matrix[myPosition[0]][myPosition[1]] = "+";
+                        gameEnded = true;
+                        break;
+                    }
+                    break;
+            }
+            if (bombsDefused) {
+                break;
+            } else if (gameEnded) {
+                break;
+            }
+            cnt++;
+        }
+        int bombsLeft = bombsCnt - defusedCnt;
+        if (bombsDefused) {
+            System.out.println("Congratulations! You found all bombs!");
+        } else if (gameEnded) {
+            System.out.printf("END! %d bombs left on the field%n", bombsLeft);
+        } else {
+
+            System.out.printf("%d bombs left on the field. Sapper position: (%d,%d)", bombsLeft, myPosition[0], myPosition[1]);
+        }
+    }
+
+    private static int getBombsCnt(String[][] matrix, int dim) {
+
+        int bombsCnt = 0;
+
+        for (int row = 0; row < dim; row++) {
+            for (int col = 0; col < dim; col++) {
+                if(matrix[row][col].equals("B")) {
+                    bombsCnt++;
+                }
+            }
+        }
+        return bombsCnt;
+    }
+
+    private static boolean outOfScope(int[] myPosition, int dim) {
+        boolean isOutOfScope = false;
+
+        if (myPosition[0] < 0 || myPosition[0] >= dim || myPosition[1] < 0 || myPosition[1] >= dim ) {
+            isOutOfScope = true;
+        }
+        return isOutOfScope;
+    }
+
+    private static int[] getMyPosition(int dim, String[][] matrix, int[] myPosition) {
+
+        boolean foundMyself = false;
+
+        for (int row = 0; row < dim; row++) {
+            for (int col = 0; col < dim; col++) {
+                if (matrix[row][col].equals("s")) {
+                    myPosition[0] = row;
+                    myPosition[1] = col;
+                    foundMyself = true;
+                    break;
+                }
+            }
+            if (foundMyself) {
+                break;
+            }
+        }
+        return myPosition;
+    }
+
+    private static String[][] getMatrix(Scanner scan, int dim, String[][] matrix) {
+
+        for (int row = 0; row < dim; row++) {
+            String[] arr = scan.nextLine().split("\\s+");
+            matrix[row] = arr;
+        }
+        return matrix;
+    }
+}
