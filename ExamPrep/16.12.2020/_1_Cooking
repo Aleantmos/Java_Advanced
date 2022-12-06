@@ -1,0 +1,72 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+
+        //liquids - queue
+        Integer[] getLiquids = Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(num -> Integer.parseInt(num))
+                .toArray(Integer[]::new);
+        ArrayDeque<Integer> liquids = new ArrayDeque<>();
+        Collections.addAll(liquids, getLiquids);
+
+        //ingredients - stack
+        Integer[] getIngredients = Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(num -> Integer.parseInt(num))
+                .toArray(Integer[]::new);
+        ArrayDeque<Integer> ingredients = new ArrayDeque<>();
+        Arrays.stream(getIngredients).forEach(n -> ingredients.push(n));
+
+        Map<String, Integer> food = new HashMap<>();
+        Map<Integer, String> resources = new HashMap<>();
+        resources.put(25, "Bread");
+        resources.put(50, "Cake");
+        resources.put(75, "Pastry");
+        resources.put(100, "Fruit Pie");
+
+        while (!ingredients.isEmpty() && !liquids.isEmpty()) {
+            int currLiquid = liquids.remove();
+            int currIngredient = liquids.pop();
+            int sum = currLiquid + currIngredient;
+
+
+            if (resources.containsKey(sum)) {
+                String foodMade = resources.get(sum);
+                food.putIfAbsent(foodMade, 0);
+                food.put(foodMade, food.get(foodMade) + 1);
+            } else {
+                ingredients.push(currIngredient + 3);
+            }
+        }
+
+        String output = "";
+
+        if (food.size() == 4) {
+            output = "Wohoo! You succeeded in cooking all the food!";
+        } else {
+            output = "Ugh, what a pity! You didn't have enough materials to cook everything.";
+        }
+
+        System.out.println(output);
+
+        if (liquids.isEmpty()) {
+            output = "Ingredients left: none";
+        } else {
+            output = String.format("Ingredients left: %s", ingredients.stream()
+                    .map(String::valueOf).collect(Collectors.joining(", ")));
+        }
+
+        System.out.println(output);
+
+        System.out.println("Bread: " + (food.getOrDefault("Bread", 0)));
+        System.out.println("Cake: " + (food.getOrDefault("Cake", 0)));
+        System.out.println("Fruit Pie: " + (food.getOrDefault("Fruit Pie", 0)));
+        System.out.println("Pastry: " + (food.getOrDefault("Pastry", 0)));
+
+    }
+
+
+}
