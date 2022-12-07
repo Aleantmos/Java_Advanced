@@ -1,0 +1,113 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class _2_Bee {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        int dim = Integer.parseInt(scan.nextLine());
+
+        char[][] matrix = new char[dim][dim];
+        int[] beePosition = new int[2];
+        int[] bonusPosition = new int[2];
+
+        getMatrix(dim, scan, matrix, beePosition, bonusPosition);
+
+        int[] beeIsOut = new int[1];
+        String command;
+        int pollinationCnt = 0;
+
+        while (!"End".equals(command = scan.nextLine())) {
+            matrix[beePosition[0]][beePosition[1]] = '.';
+
+            moveBee(dim, beePosition, command, beeIsOut);
+
+            if (beeIsOut[0] == 1) {
+                break;
+            }
+
+            if (beePosition[0] == bonusPosition[0] && beePosition[1] == bonusPosition[1]) {
+                matrix[beePosition[0]][beePosition[1]] = '.';
+                moveBee(dim, beePosition, command, beeIsOut);
+            }
+
+            if (matrix[beePosition[0]][beePosition[1]] == 'f') {
+                pollinationCnt++;
+                matrix[beePosition[0]][beePosition[1]] = '.';
+            }
+            matrix[beePosition[0]][beePosition[1]] = 'B';
+        }
+
+        if (beeIsOut[0] == 1) {
+            System.out.println("The bee got lost!");
+        }
+
+        if (pollinationCnt >= 5) {
+            System.out.printf("Great job, the bee manage to pollinate %d flowers!%n", pollinationCnt);
+        } else {
+            int needed = 5 - pollinationCnt;
+            System.out.printf("The bee couldn't pollinate the flowers, she needed %d flowers more%n", needed);
+        }
+        Arrays.stream(matrix).map(String::valueOf).forEach(System.out::println);
+    }
+
+    private static void moveBee(int dim, int[] beePosition, String command, int[] beeIsOut) {
+
+        switch (command) {
+            case "up":
+                if (scopeOfBee(beePosition[0] - 1, beePosition[1], dim)) {
+                    beePosition[0] -= 1;
+                } else {
+                    beeIsOut[0] = 1;
+                }
+                break;
+            case "down":
+                if (scopeOfBee(beePosition[0] + 1, beePosition[1], dim)) {
+                    beePosition[0] += 1;
+                } else {
+                    beeIsOut[0] = 1;
+                }
+                break;
+            case "left":
+                if (scopeOfBee(beePosition[0], beePosition[1] - 1, dim)) {
+                    beePosition[1] -= 1;
+                } else {
+                    beeIsOut[0] = 1;
+                }
+                break;
+            case "right":
+                if (scopeOfBee(beePosition[0], beePosition[1] + 1, dim)) {
+                    beePosition[1] += 1;
+                } else {
+                    beeIsOut[0] = 1;
+                }
+                break;
+        }
+    }
+
+    private static boolean scopeOfBee(int row, int col, int dim) {
+
+        boolean inScope = (row >= 0 && row < dim && col >= 0 && col < dim);
+        return inScope;
+    }
+
+    private static void getMatrix(int dim, Scanner scan, char[][] matrix, int[] beePosition, int[] bonusPosition) {
+
+        for (int row = 0; row < dim; row++) {
+            String arr = scan.nextLine();
+            for (int col = 0; col < dim; col++) {
+                matrix[row][col] = arr.charAt(col);
+
+                if (arr.charAt(col) == 'B') {
+                    beePosition[0] = row;
+                    beePosition[1] = col;
+                }
+                if (arr.charAt(col) == 'O') {
+                    bonusPosition[0] = row;
+                    bonusPosition[1] = col;
+                }
+            }
+
+        }
+    }
+}
