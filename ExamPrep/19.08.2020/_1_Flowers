@@ -1,0 +1,69 @@
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Scanner;
+
+public class _1_Flowers {
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+
+        //lilies -> stack
+        Integer[] getLilies = Arrays.stream(scan.nextLine().split(", "))
+                .map(lilie -> Integer.parseInt(lilie))
+                .toArray(Integer[]::new);
+        ArrayDeque<Integer> lilies = new ArrayDeque<>();
+        Arrays.stream(getLilies).forEach(lilie -> lilies.push(lilie));
+
+        //roses -> queue
+        Integer[] getRoses = Arrays.stream(scan.nextLine().split(", "))
+                .map(rose -> Integer.parseInt(rose))
+                .toArray(Integer[]::new);
+        ArrayDeque<Integer> roses = new ArrayDeque<>();
+        Collections.addAll(roses, getRoses);
+
+        int storedFlowers = 0;
+        int wreathsCount = 0;
+
+        while (!lilies.isEmpty() && !roses.isEmpty()) {
+
+            int currLilie = lilies.pop();
+            int currRose = roses.remove();
+
+            int sum = currLilie + currRose;
+
+            while (sum > 15) {
+                sum -= 2;
+            }
+            if (sum == 15) {
+                wreathsCount = wreathsCount + 1;
+            } else if (sum < 15) {
+                storedFlowers += sum;
+            }
+            if (wreathsCount == 5) {
+                break;
+            }
+        }
+
+
+        wreathsCount += storedFlowers /15;
+
+        if (wreathsCount >= 5) {
+            System.out.printf("You made it, you are going to the competition with %d wreaths!", wreathsCount);
+        } else {
+            int wreathsNeeded = 5 - wreathsCount;
+            System.out.printf("You didn't make it, you need %d wreaths more!", wreathsNeeded);
+        }
+
+    }
+
+    public static void checkSum(int sum, int wreathsCount, int storedFlowers) {
+        if (sum == 15) {
+            wreathsCount = wreathsCount + 1;
+        } else if (sum < 15) {
+            storedFlowers += sum;
+        }
+
+    }
+
+}
