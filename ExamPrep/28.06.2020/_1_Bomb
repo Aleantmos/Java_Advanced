@@ -1,0 +1,98 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class _1_Bomb {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        //effect - queue
+        Integer[] getEffect = Arrays.stream(scan.nextLine().split(", "))
+                .map(num -> Integer.parseInt(num))
+                .toArray(Integer[]::new);
+        ArrayDeque<Integer> effects = new ArrayDeque<>();
+        Arrays.stream(getEffect).forEach(effect -> effects.add(effect));
+
+        //casing - stack
+        Integer[] getCasing = Arrays.stream(scan.nextLine().split(", "))
+                .map(num -> Integer.parseInt(num))
+                .toArray(Integer[]::new);
+        ArrayDeque<Integer> casings = new ArrayDeque<>();
+        Arrays.stream(getCasing).forEach(casing -> casings.push(casing));
+
+
+        Map<Integer, String> bombMap = new HashMap<>();
+        bombMap.put(40, "Datura Bombs");
+        bombMap.put(60, "Cherry Bombs");
+        bombMap.put(120, "Smoke Decoy Bombs");
+
+        boolean pouchFilled = false;
+        Map<String, Integer> bombsMade = new TreeMap<>();
+
+        bombsMade.putIfAbsent("Datura Bombs", 0);
+        bombsMade.putIfAbsent("Cherry Bombs", 0);
+        bombsMade.putIfAbsent("Smoke Decoy Bombs", 0);
+
+        while (!effects.isEmpty() && !casings.isEmpty()) {
+
+            int currEffect = effects.remove();
+            int currCasing = casings.pop();
+
+            int sum = 0;
+
+            boolean match = false;
+            while (!match && currCasing >= 0) {
+                sum = currEffect + currCasing;
+                switch (sum) {
+                    case 40:
+                        bombsMade.put("Datura Bombs", bombsMade.get("Datura Bombs") + 1);
+                        match = true;
+                        break;
+                    case 60:
+                        bombsMade.put("Cherry Bombs", bombsMade.get("Cherry Bombs") + 1);
+                        match = true;
+                        break;
+                    case 120:
+                        bombsMade.put("Smoke Decoy Bombs", bombsMade.get("Smoke Decoy Bombs") + 1);
+                        match = true;
+                        break;
+                    default:
+                        currCasing -= 5;
+                }
+            }
+            if (bombsMade.values().stream().filter(bomb -> bomb >= 3).count() == 3) {
+                pouchFilled = true;
+                break;
+            }
+        }
+            String result = "";
+
+            if (pouchFilled) {
+                System.out.println("Bene! You have successfully filled the bomb pouch!");
+            } else {
+                System.out.println("You don't have enough materials to fill the bomb pouch.");
+            }
+
+            if (effects.isEmpty()) {
+                System.out.println("Bomb Effects: empty");
+            } else {
+                System.out.print("Bomb Effects: ");
+                result = effects.stream()
+                        .map(effect -> effect.toString())
+                        .collect(Collectors.joining(", "));
+                System.out.println(result);
+            }
+
+            if (casings.isEmpty()) {
+                System.out.println("Bomb Casings: empty");
+            } else {
+                System.out.print("Bomb Casings: ");
+                result = casings.stream()
+                        .map(casing -> casing.toString())
+                        .collect(Collectors.joining(", "));
+                System.out.println(result);
+            }
+
+            bombsMade.forEach((key, value) -> System.out.printf("%s: %d%n", key, value));
+
+    }
+}
