@@ -1,0 +1,112 @@
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class _2_Snake {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        int dim = Integer.parseInt(scan.nextLine());
+
+        char[][] matrix = new char[dim][dim];
+        int[] snakePosition = new int[2];
+        int[][] burrow = new int[2][2];
+
+        getInfo(matrix, snakePosition, burrow, dim, scan);
+
+        int eatenFood = 0;
+        int[] outOfScope = new int[1];
+
+        while (eatenFood < 10) {
+            String command = scan.nextLine();
+            matrix[snakePosition[0]][snakePosition[1]] = '.';
+            move(command, snakePosition, matrix, dim, outOfScope);
+
+            if (outOfScope[0] == 1) {
+                break;
+            }
+
+            if (matrix[snakePosition[0]][snakePosition[1]] == '*') {
+                eatenFood++;
+            }
+            if (matrix[snakePosition[0]][snakePosition[1]] == 'B') {
+                matrix[snakePosition[0]][snakePosition[1]] = '.';
+                if (snakePosition[0] == burrow[0][0] && snakePosition[1] == burrow[0][1]) {
+                    snakePosition[0] = burrow[1][0];
+                    snakePosition[1] = burrow[1][1];
+                } else {
+                    snakePosition[0] = burrow[0][0];
+                    snakePosition[1] = burrow[0][1];
+                }
+            }
+        }
+
+        if (outOfScope[0] == 1) {
+            System.out.println("Game over!");
+        } else {
+            matrix[snakePosition[0]][snakePosition[1]] = 'S';
+            System.out.println("You won! You fed the snake.");
+        }
+        System.out.println("Food eaten: " + eatenFood);
+        Arrays.stream(matrix).map(String::valueOf).forEach(System.out::println);
+    }
+
+    private static void move(String command, int[] snakePosition, char[][] matrix, int dim, int[] outOfScope) {
+
+
+        switch (command) {
+            case "up":
+                if (checkScope(snakePosition[0] - 1, snakePosition[1], dim)) {
+                    snakePosition[0] -= 1;
+                } else {
+                    outOfScope[0] = 1;
+                }
+                break;
+            case "down":
+                if (checkScope(snakePosition[0] + 1, snakePosition[1], dim)){
+                    snakePosition[0] += 1;
+                } else {
+                    outOfScope[0] = 1;
+                }
+                break;
+            case "left":
+                if (checkScope(snakePosition[0], snakePosition[1] - 1, dim)) {
+                    snakePosition[1] -= 1;
+                } else {
+                    outOfScope[0] = 1;
+                }
+
+                break;
+            case "right":
+                if (checkScope(snakePosition[0], snakePosition[1] + 1, dim)) {
+                    snakePosition[1] += 1;
+                } else {
+                    outOfScope[0] = 1;
+                }
+                break;
+        }
+    }
+
+    private static boolean checkScope(int row, int col, int scope) {
+        boolean inScope = (row >= 0 && row < scope && col >= 0 && col < scope);
+        return inScope;
+    }
+
+    private static void getInfo(char[][] matrix, int[] snakePosition, int[][] burrow, int dim, Scanner scan) {
+        int burrowRow = 0;
+        for (int row = 0; row < dim; row++) {
+            String arr = scan.nextLine();
+            for (int col = 0; col < dim; col++) {
+                matrix[row][col] = arr.charAt(col);
+                if (matrix[row][col] == 'S') {
+                    snakePosition[0] = row;
+                    snakePosition[1] = col;
+                } else if (matrix[row][col] == 'B') {
+                    burrow[burrowRow][0] = row;
+                    burrow[burrowRow][1] = col;
+                    burrowRow++;
+                }
+            }
+        }
+    }
+}
