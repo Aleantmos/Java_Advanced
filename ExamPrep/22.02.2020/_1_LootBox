@@ -1,0 +1,61 @@
+import java.util.*;
+
+public class _1_LootBox {
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+
+        //box1 - queue
+
+        Integer[] getBox1 = getGetBox(scan);
+        ArrayDeque<Integer> box1 = new ArrayDeque<>();
+        Collections.addAll(box1, getBox1);
+
+
+        //box2 - stack
+        Integer[] getBox2 = getGetBox(scan);
+        ArrayDeque<Integer> box2 = new ArrayDeque<>();
+        Arrays.stream(getBox2).forEach(box2::push);
+
+        List<Integer> claimedItems = new ArrayList<>();
+
+        while (!box1.isEmpty() && !box2.isEmpty()) {
+            int currBox1 = box1.peek();
+            int currBox2 = box2.pop();
+
+            int sum = currBox1 + currBox2;
+
+            if (sum % 2 == 0) {
+                claimedItems.add(sum);
+                box1.remove();
+            } else {
+                box1.add(currBox2);
+            }
+        }
+
+        int total = 0;
+        total = claimedItems.stream().mapToInt(Integer::intValue).sum();
+        String result;
+
+        if (box1.isEmpty()) {
+            result = String.format("First lootbox is empty");
+        } else {
+            result = String.format("Second lootbox is empty");
+        }
+
+        System.out.println(result);
+
+        if (total >= 100) {
+            result = String.format("Your loot was epic! Value: %d", total);
+        } else {
+            result = String.format("Your loot was poor... Value: %d", total);
+        }
+        System.out.println(result);
+    }
+
+    private static Integer[] getGetBox(Scanner scan) {
+        return Arrays.stream(scan.nextLine().split("\\s+"))
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new);
+    }
+}
