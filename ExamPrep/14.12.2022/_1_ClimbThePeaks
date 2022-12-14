@@ -1,0 +1,96 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class _1_ClimbThePeaks {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+
+        //supplies -> stack
+        Integer[] getSupplies = getArrayInfo(scan);
+        ArrayDeque<Integer> supplies = new ArrayDeque<>();
+        Arrays.stream(getSupplies).forEach(s -> supplies.push(s));
+
+        //stamina -> queue
+        Integer[] getStamina = getArrayInfo(scan);
+        ArrayDeque<Integer> stamina = new ArrayDeque<>();
+        Arrays.stream(getStamina).forEach(s -> stamina.add(s));
+
+        Map<Integer, String> peakMap = new LinkedHashMap<>();
+        peakMap.put(80, "Vihren");
+        peakMap.put(90, "Kutelo");
+        peakMap.put(100, "Banski Suhodol");
+        peakMap.put(60, "Polezhan");
+        peakMap.put(70, "Kamenitza");
+
+        List<Integer> difficulty = new ArrayList<>();
+        difficulty.add(80);
+        difficulty.add(90);
+        difficulty.add(100);
+        difficulty.add(60);
+        difficulty.add(70);
+
+        List<String> conqueredPeaks = new ArrayList<>();
+        boolean allPeaksConquered = false;
+
+        for (int day = 0; day < 7; day++) {
+
+            int currSupply = supplies.poll();
+            int currStamina = stamina.pop();
+            if (checkNumber(currSupply) && checkNumber(currStamina)) {
+                return;
+            }
+
+            int sum = currStamina + currSupply;
+
+
+            for (Integer currPeakDiff : difficulty) {
+                if (sum >= currPeakDiff) {
+                    if (peakMap.get(currPeakDiff) != null) {
+                        conqueredPeaks.add(peakMap.get(currPeakDiff));
+                    }
+                    peakMap.remove(currPeakDiff);
+                } else {
+                    break;
+                }
+            }
+
+            if (peakMap.isEmpty()) {
+                allPeaksConquered = true;
+                break;
+            }
+        }
+
+        if (allPeaksConquered) {
+            System.out.println("Alex did it! He climbed all top five Pirin peaks in one week -> @FIVEinAWEEK");
+        } else {
+            System.out.println("Alex failed! He has to organize his journey better next time -> @PIRINWINS");
+        }
+
+        if (!conqueredPeaks.isEmpty()) {
+            System.out.println("Conquered peaks: ");
+
+            for (int i = 0; i < conqueredPeaks.size(); i++) {
+                if (i == conqueredPeaks.size() - 1) {
+                    System.out.print(conqueredPeaks.get(i));
+                } else {
+                    System.out.println(conqueredPeaks.get(i));
+                }
+            }
+
+            /*for (String conqueredPeak : conqueredPeaks) {
+                System.out.println(conqueredPeak);
+            }*/
+        }
+    }
+
+    private static boolean checkNumber(int num) {
+        return (num < 0 && num > 100);
+    }
+
+    private static Integer[] getArrayInfo(Scanner scan) {
+        return Arrays.stream(scan.nextLine().split(", "))
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new);
+    }
+}
